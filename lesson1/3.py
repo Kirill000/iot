@@ -1,0 +1,1 @@
+print("Third task: ", 36/6*2)
