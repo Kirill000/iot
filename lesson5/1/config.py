@@ -1,11 +1,7 @@
-errorTextImport = 'Ошибка при открытии файла'
-errorDataImport = 'Количество столбцов неверно'
-errorData = 'Нет записей'
-errorTextInterpolate = 'Интерполяция не сделана'
-
 data = []
 interpolateData = []
+n_points = 0
 
 #Объекты окон приложения
 mainApp = None
-gW = None
+gW = None 
