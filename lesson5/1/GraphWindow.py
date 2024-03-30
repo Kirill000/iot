@@ -2,14 +2,15 @@ import tkinter as tk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+import matplotlib.pyplot as plt
 from DiagramWindow import DiagramWindow
 from scipy.interpolate import LinearNDInterpolator
 from scipy.spatial import Delaunay
+from delone_triangulation import delone_triangulation
 
 class GraphWindow(tk.Toplevel):
     def __init__(self, master, x_coords, z_coords, r_values):
         super().__init__(master)
-        self.n_points = x_coords.pop(len(x_coords)-1).split("/")
         self.x_coords = [int(x) for x in x_coords]
         self.z_coords = [int(x) for x in z_coords]
         self.r_values = [int(x) for x in r_values]
@@ -35,20 +36,48 @@ class GraphWindow(tk.Toplevel):
         x1, z1 = self.selected_points[0]
         x2, z2 = self.selected_points[1]
 
-        n_points = np.array([[x1, z1], [x2, z2], [x1, z1 + 1e-6], [x2, z2 + 1e-6]])
-        tri = Delaunay(n_points)
-        
-        interp = LinearNDInterpolator(tri, [self.r_values[0], self.r_values[1], 0, 0])
-        x_coordinates_new = np.linspace(x1, x2, len(self.n_points))
-        z_coordinates_new = [_ for _ in self.n_points]
+        # Добавляем две фиктивные точки для построения триангуляции
+        points = []
+        print(x2, z2, x1, z1)
 
-        # z_new = linear_interpolation(points, self.r_values, x_values)
-        print(x_coordinates_new, z_coordinates_new)
-        return x_coordinates_new, z_coordinates_new
+        interp_p = []
+        for x in self.x_coords:
+            interp_p.append([x, self.z_coords[self.x_coords.index(x)]])
+        x_points = []
+        z_points = []
+        for _ in range(18):
+            x_points.append(x1)
+            z_points.append(z1)
+            points.append([x1, z1])
 
+            x1 += (x2 - x1)/18
+            z1 += (z2 - z1)/18
+        print(points,self.r_values)
+        z_new = delone_triangulation(interp_p,np.array(self.r_values),points,2)
+        # tri = Delaunay(np.array(points))
+        # plt.triplot(x_points, z_points, tri.simplices)
+        # plt.plot(x_points, z_points, 'o')
+        plt.show()
+
+        # points_to_inter = []
+        # step_x = (self.selected_points[0][0] - self.selected_points[1][0]) / 18
+        # step_z = (self.selected_points[0][1] - self.selected_points[1][1]) / 18
+        #
+        # x0 = self.selected_points[0][0]
+        # z0 = self.selected_points[0][1]
+        #
+        # while x0 <= self.selected_points[1][0] and z0 <= self.selected_points[1][1]:
+        #     points_to_inter.append([x0, z0])
+        #     z0 += step_z
+        #     x0 += step_x
+        #
+        # interp = delone_triangulation(points, [self.r_values[0], self.r_values[1], self.r_values[0], self.r_values[1]], np.array(points_to_inter), n_points)  # Используем экстраполяцию
+        #
+        # return 0, interp
+        return x_points, z_new
     def build_epure(self):
         n_points = 100
-        x_new, r_new = self.calculate_r_values([self.x_coords[0], self.x_coords[1]], n_points)
+        x_new,r_new=self.calculate_r_values([self.x_coords[0], self.x_coords[1]], n_points)
         self.diagram_window = DiagramWindow(self, x_new, r_new)
         
     def on_click(self, event):

@@ -13,7 +13,6 @@ def load_csv_file(filepath):
             file_reader = csv.reader(r_file, delimiter=",")
             # Счетчик для подсчета количества строк и вывода заголовков столбцов
             count = 0
-            l = []
             # Считывание данных из CSV файла
             for row in file_reader:
                 if count == 0:
@@ -28,11 +27,11 @@ def load_csv_file(filepath):
                     data.append(l)
                     for a in range(len(l)):
                         if a % 3 == 0:
-                            x_coords.append(l[a])
+                            x_coords.append(float(l[a]))
                         elif a % 3 == 1:
-                            z_coords.append(l[a])
+                            z_coords.append(float(l[a]))
                         else:
-                            r_values.append(l[a])
+                            r_values.append(float(l[a]))
                 count += 1
             return x_coords, z_coords, r_values
-print(load_csv_file("1\data\points.csv"))
+# print(load_csv_file("1\data\points.csv"))
