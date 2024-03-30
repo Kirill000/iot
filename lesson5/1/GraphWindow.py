@@ -57,7 +57,6 @@ class GraphWindow(tk.Toplevel):
         # tri = Delaunay(np.array(points))
         # plt.triplot(x_points, z_points, tri.simplices)
         # plt.plot(x_points, z_points, 'o')
-        plt.show()
 
         # points_to_inter = []
         # step_x = (self.selected_points[0][0] - self.selected_points[1][0]) / 18
